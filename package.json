@@ -1,0 +1,38 @@
+{
+  "name": "voicejoke",
+  "version": "1.0.0",
+  "description": "Simple web-based voice chatbot that tells jokes. Dialogflow + Web Speech API + Node JS + PostgreSQL",
+  "main": "vj.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IuriiD/voicejoke.git"
+  },
+  "keywords": [
+    "chatbot",
+    "voice",
+    "bot",
+    "dialogflow",
+    "web",
+    "speech",
+    "api",
+    "node",
+    "js",
+    "postgresql"
+  ],
+  "author": "iurii.dziuban@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IuriiD/voicejoke/issues"
+  },
+  "homepage": "https://github.com/IuriiD/voicejoke#readme",
+  "dependencies": {
+    "apiai": "^4.0.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "pg": "^7.4.3",
+    "request": "^2.87.0"
+  }
+}
