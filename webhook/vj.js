@@ -11,8 +11,8 @@ const { Pool, Client } = require('pg');
 
 const user = "postgres";
 const host = "localhost";
-const database = "voicejoke";
-const jokesTable = "jokes";
+const database = "finishproverbvoicebot";
+const myTable = "proverb";
 const dbPort = 5432;
 
 
@@ -26,7 +26,7 @@ const pool = new Pool({
 
 async function getPool() {
     try {
-        let ourPool = await pool.query('SELECT * from jokes');
+        let ourPool = await pool.query(`SELECT * from ${myTable}`);
         console.log("\n" + JSON.stringify(ourPool, null, 2));
         pool.end();
     } catch (e) {
@@ -56,8 +56,7 @@ async function getQuery(q) {
 
 }
 
-let q = "";
-q = `SELECT text, number FROM ${jokesTable} where not (number = 1 or number = 2)`;
+let q = `SELECT * from ${myTable}`;
 //q = `UPDATE ${jokesTable} SET rating = 5 WHERE number = 1`;
 getQuery(q);
 
