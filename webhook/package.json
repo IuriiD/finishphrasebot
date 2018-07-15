@@ -1,8 +1,8 @@
 {
-  "name": "voicejoke",
+  "name": "finishphrasebot",
   "version": "1.0.0",
-  "description": "Simple web-based voice chatbot that tells jokes. Dialogflow + Web Speech API + Node JS + PostgreSQL",
-  "main": "vj.js",
+  "description": "Simple web-based voice chatbot that tells the beginning of a phrase (for eg., a proverb) and asks user to finish it. Dialogflow + Node JS + PostgreSQL + Web Speech API",
+  "main": "wh.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

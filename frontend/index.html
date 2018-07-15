@@ -2,18 +2,28 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Voicebot</title>
+    <title>FinishPhraseBot</title>
     <link type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="normalize.css" />
     <link rel="stylesheet" type="text/css" href="layout.css" />
     <script type="text/javascript" src="ApiAi.js"></script>
     <script type="text/javascript" src="app.js"></script>
     <meta name="viewport" content="width=device-width" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115304736-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-115304736-1');
+    </script>
   </head>
 <body>
 
   <div class="app-container">
-    <div class="app-header"><h1>Voicebot</h1></div>
+    <div class="app-header"><h1>FinishPhraseBot</h1></div>
     <div class="app-content">
       <div class="time-indicator"><div class="time-indicator-content">8:20</div><hr /></div>
     </div>
@@ -27,17 +37,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-907594-9', 'auto');
-    ga('send', 'pageview');
-
-  </script>
 
 </body>
 </html>

@@ -33,7 +33,6 @@ app.post("/webhook", async function(req, res) {
         console.log(JSON.stringify(ourReq, null, 2));
 
         let action = ourReq.result.action;
-        console.log(`#####################\nAction: ${action}`);
 
         if (action == "letsplay") {
             console.log('here');
@@ -59,9 +58,9 @@ app.post("/webhook", async function(req, res) {
 
 async function checkAnswer(usersAnswer, anwserVariants) {
     if (anwserVariants.includes(usersAnswer)) {
-        return "Quite right!\n";
+        return "Quite right!";
     } else {
-        return `Nope. Correct variant is: "..${anwserVariants[0]}".\n`;
+        return `Nope. Correct variant is: "..${anwserVariants[0]}".`;
     }
 }
 
@@ -116,9 +115,9 @@ async function askProverb(reactionToPrevAnswer) {
     let speech = reactionToPrevAnswer;
     console.log("\nproverbsIDsSeen.length: " + proverbsIDsSeen.length);
     if (proverbsIDsSeen.length == 1) {
-        speech += `Ok. Here's my first question:\n${proverbStarts}...`;
+        speech += `Ok. Here's my first question: ${proverbStarts}...`;
     } else {
-        speech += `Next one: \n${proverbStarts}...`;
+        speech += `Next one: ${proverbStarts}...`;
     }
 
     payload = {
