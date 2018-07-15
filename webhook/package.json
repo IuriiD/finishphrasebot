@@ -4,6 +4,7 @@
   "description": "Simple web-based voice chatbot that tells the beginning of a phrase (for eg., a proverb) and asks user to finish it. Dialogflow + Node JS + PostgreSQL + Web Speech API",
   "main": "wh.js",
   "scripts": {
+    "start": "node wh.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
