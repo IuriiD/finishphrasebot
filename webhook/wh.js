@@ -101,6 +101,17 @@ async function askProverb(reactionToPrevAnswer) {
         return payload;
     }
 
+    //
+    /*
+    q = `CREATE TABLE proverbs (id INT, proverbstarts TEXT, proverbends TEXT [])`;
+    dbResponse = await getQuery(q);
+
+        q = `INSERT INTO proverbs VALUES (1, 'Actions speak louder than', '{"word", "words"}'), (2, 'A journey of a thousand miles begins with',  '{"a single step", "single step", "one step", "a step"}'), (3, 'All good things must come to', '{"an end", "end", "finish", "come to end"}'), (4, 'A picture is worth', '{"a thousand words", "thousand words", "thousand of words", "million words", "many words"}'), (5, 'Better late than', '{"never"}')`;
+    dbResponse = await getQuery(q);
+    */
+    //
+
+
     // Request a phrase with chosen ID
     q = `SELECT * FROM ${proverbsTable} where id=${nextProverbID}`;
     dbResponse = await getQuery(q);
@@ -117,7 +128,7 @@ async function askProverb(reactionToPrevAnswer) {
     if (proverbsIDsSeen.length == 1) {
         speech += `Ok. Here's my first question: ${proverbStarts}...`;
     } else {
-        speech += `Next one: ${proverbStarts}...`;
+        speech += ` Next one: ${proverbStarts}...`;
     }
 
     payload = {
@@ -139,18 +150,24 @@ async function getQuery(q) {
     try {
         const { Client } = require('pg');
 
-        const user = "postgres";
-        const host = "localhost";
-        const database = "finishproverbbot";
+        // postgres://ydxzwdgaxatmet:62956e12ce87b32acaa57a4a04f8e3ac3cfdcd9fc6b36cdbde540ed665214756@ec2-54-235-249-33.compute-1.amazonaws.com:5432/d6fkk5vc9s6g8p
+        const user = "ydxzwdgaxatmet"; // postgres
+        const host = "ec2-54-235-249-33.compute-1.amazonaws.com"; // localhost
+        const database = "d6fkk5vc9s6g8p"; // finishproverbbot
         const dbPort = 5432;
 
         const client = new Client({
             user: user,
             host: host,
             database: database,
-            password: keys.postgreSQLKey,
+            password: process.env.postgreSQLKey, //;keys.postgreSQLKey,
             port: dbPort,
         });
+        /*
+        const pg = require('pg');
+        const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/finishproverbbot';
+        const client = new pg.Client(connectionString);
+        */
 
         client.connect();
 
