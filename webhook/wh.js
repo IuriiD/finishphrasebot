@@ -20,7 +20,7 @@ app.listen((process.env.PORT || 5000), function() {console.log("FinishProverbVoi
 
 // Server index and info page
 app.get("/", (req, res) => {
-    res.send("FinishProverbVoiceBot<br>More details: <a href='https://github.com/IuriiD/finishproverbvoicebot'>Github</a><br><a href='http://iuriid.github.io'>Iurii Dziuban - July 2018</a>");
+    res.send("FinishProverbVoiceBot<br>More details: <a href='https://github.com/IuriiD/finishphrasebot'>Github</a><br><a href='http://iuriid.github.io'>Iurii Dziuban - July 2018</a>");
 });
 
 
@@ -35,17 +35,26 @@ app.post("/webhook", async function(req, res) {
         let action = ourReq.result.action;
 
         if (action == "letsplay") {
-            console.log('here');
             payload = await askProverb("");
         }
 
         else if (action == "useranswers") {
-            console.log('here2');
             let usersAnswer = ourReq.result.resolvedQuery;
-            console.log(`\nusersAnswer: ${usersAnswer}`);
             let reactionToPrevAnswer = await checkAnswer(usersAnswer, anwserVariants);
-            console.log(`\nreactionToPrevAnswer: ${reactionToPrevAnswer}`);
             payload = await askProverb(reactionToPrevAnswer);
+        }
+
+        else if (action == "restart") {
+            proverbsIDsSeen = [];
+            payload = {
+                "speech": "Ok, let's start from the beginning.. Ready?",
+                "displayText": "Ok, let's start from the beginning.. Ready?",
+                "contextOut": [{
+                    "name": "letsplay",
+                    "parameters": {},
+                    "lifespan": 2
+                }]
+            };
         }
 
         res.status(200).send(payload);
@@ -150,7 +159,7 @@ async function getQuery(q) {
     try {
         const { Client } = require('pg');
 
-        // postgres://ydxzwdgaxatmet:62956e12ce87b32acaa57a4a04f8e3ac3cfdcd9fc6b36cdbde540ed665214756@ec2-54-235-249-33.compute-1.amazonaws.com:5432/d6fkk5vc9s6g8p
+        // Credentials for Heroku
         const user = "ydxzwdgaxatmet"; // postgres
         const host = "ec2-54-235-249-33.compute-1.amazonaws.com"; // localhost
         const database = "d6fkk5vc9s6g8p"; // finishproverbbot
@@ -160,14 +169,9 @@ async function getQuery(q) {
             user: user,
             host: host,
             database: database,
-            password: process.env.postgreSQLKey, //;keys.postgreSQLKey,
+            password: process.env.postgreSQLKey,
             port: dbPort,
         });
-        /*
-        const pg = require('pg');
-        const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/finishproverbbot';
-        const client = new pg.Client(connectionString);
-        */
 
         client.connect();
 
