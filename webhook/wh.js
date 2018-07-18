@@ -11,13 +11,15 @@ let proverbsIDsSeen = []; // a list of ID's of proverbs that were already shown 
 let anwserVariants = []; // possible answer variants for current question (proverb)
 const proverbsTable = "proverbs"; // name of table with proverb tasks in our DB (finishproverbbot)
 
-let users = {
+let users = {};
+/*
+{
     "sessionId": {
         "proverbsIDsSeen": [],
         "anwserVariants": []
     }
 };
-
+*/
 
 let app = express();
 app.use(bodyParser.urlencoded({extended: false}));
@@ -36,6 +38,8 @@ app.post("/webhook", async function(req, res) {
     try {
         let payload;
         let ourReq = req.body;
+
+        console.log(`\n${JSON.stringify(users)}`);
 
         console.log("\nResponse from Dialogflow:\n");
         console.log(JSON.stringify(ourReq, null, 2));
@@ -65,14 +69,25 @@ app.post("/webhook", async function(req, res) {
         }
 
         if (action == "letsplay") {
+            console.log(`action = letsplay`);
             users[sessionId] = { "proverbsIDsSeen": [], "anwserVariants": [] };
-            payload = await askProverb("");
+            payload = await askProverb("", sessionId);
         }
 
         else if (action == "useranswers") {
+            console.log(`action = useranswers`);
             let usersAnswer = ourReq.result.resolvedQuery;
-            let reactionToPrevAnswer = await checkAnswer(usersAnswer, users.sessionId.anwserVariants);
-            payload = await askProverb(reactionToPrevAnswer);
+            let reactionToPrevAnswer = await checkAnswer(usersAnswer, users[sessionId].anwserVariants);
+            let contexts = ourReq.result.contexts;
+            if (contexts.length > 0) {
+                for (let eachContext of contexts) {
+                    if (eachContext.name = "endgame") {
+                        payload = await askProverb("", sessionId);
+                    } else {
+                        payload = await askProverb(reactionToPrevAnswer, sessionId);
+                    }
+                }
+            }
         }
 
         else if (action == "restart") {
@@ -145,7 +160,7 @@ app.post("/webhook", async function(req, res) {
 
 async function checkAnswer(usersAnswer, anwserVariants) {
     if (anwserVariants.includes(usersAnswer)) {
-        return "Quite right!";
+        return "Quite right! ";
     } else {
         return `Nope. Correct variant is: "..${anwserVariants[0]}".`;
     }
@@ -153,7 +168,7 @@ async function checkAnswer(usersAnswer, anwserVariants) {
 
 
 // Randomly chooses a proverb's ID among IDs that hasn't been presented yet
-async function askProverb(reactionToPrevAnswer) {
+async function askProverb(reactionToPrevAnswer, sessionId) {
     // Get row/proverbs total number
     let q = `SELECT COUNT(*) from ${proverbsTable}`;
     let dbResponse = await getQuery(q);
@@ -163,9 +178,9 @@ async function askProverb(reactionToPrevAnswer) {
     let nextProverbID = null;
     for (let i=0; i<proverbsCount; i++) {
         let randN = Math.floor(Math.random() * proverbsCount) + 1;
-        if (!users.sessionId.proverbsIDsSeen.includes(randN)) {
+        if (!users[sessionId].proverbsIDsSeen.includes(randN)) {
             nextProverbID = randN;
-            users.sessionId.proverbsIDsSeen.push(randN);
+            users[sessionId].proverbsIDsSeen.push(randN);
             break;
         }
     }
@@ -175,16 +190,28 @@ async function askProverb(reactionToPrevAnswer) {
     let payload = {
         "speech": response,
         "displayText": response,
-        "contextOut": [{
-            "name": "endgame",
-            "parameters": {},
-            "lifespan": 2
-        }]
+        "contextOut": [
+            {
+                "name": "endgame",
+                "parameters": {},
+                "lifespan": 1
+            },
+            {
+                "name": "useranswers",
+                "parameters": {},
+                "lifespan": 0
+            },
+            {
+                "name": "letsplay",
+                "parameters": {},
+                "lifespan": 1
+            }
+        ]
     };
 
     // All proverbs have been asked
     if (!nextProverbID) {
-        proverbsIDsSeen = [];
+        delete users[sessionId];
         return payload;
     }
 
@@ -192,16 +219,16 @@ async function askProverb(reactionToPrevAnswer) {
     q = `SELECT * FROM ${proverbsTable} where id=${nextProverbID}`;
     dbResponse = await getQuery(q);
     let dbResponseParsed = JSON.parse(dbResponse);
-    console.log("\nDB RESPONSE:\n");
+    // console.log("\nDB RESPONSE:\n");
     //console.log(dbResponseParsed);
 
     let proverbStarts = dbResponseParsed.rows[0].proverbstarts;
-    users.sessionId.anwserVariants = dbResponseParsed.rows[0].proverbends;
+    users[sessionId].anwserVariants = dbResponseParsed.rows[0].proverbends;
     //let proverbID = dbResponseParsed.rows[0].id;
 
     let speech = reactionToPrevAnswer;
-    console.log("\nproverbsIDsSeen.length: " + users.sessionId.proverbsIDsSeen.length);
-    if (users.sessionId.proverbsIDsSeen.length == 1) {
+    //console.log("\nproverbsIDsSeen.length: " + users[sessionId].proverbsIDsSeen.length);
+    if (users[sessionId].proverbsIDsSeen.length == 1) {
         speech += `Ok. Here's my first question: ${proverbStarts}...`;
     } else {
         speech += ` Next one: ${proverbStarts}...`;
@@ -213,7 +240,7 @@ async function askProverb(reactionToPrevAnswer) {
         "contextOut": [{
             "name": "useranswers",
             "parameters": {},
-            "lifespan": 2
+            "lifespan": 1
         }]
     };
 
