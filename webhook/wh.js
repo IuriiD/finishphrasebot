@@ -7,12 +7,10 @@ const bodyParser = require("body-parser");
 let keys = {};
 try { keys = require("./keys"); } catch (error) { console.log("Keys.js file not found"); }
 
-let proverbsIDsSeen = []; // a list of ID's of proverbs that were already shown to user
-let anwserVariants = []; // possible answer variants for current question (proverb)
 const proverbsTable = "proverbs"; // name of table with proverb tasks in our DB (finishproverbbot)
 
 let users = {};
-/*
+/* Structure:
 {
     "sessionId": {
         "proverbsIDsSeen": [],
@@ -69,25 +67,14 @@ app.post("/webhook", async function(req, res) {
         }
 
         if (action == "letsplay") {
-            console.log(`action = letsplay`);
             users[sessionId] = { "proverbsIDsSeen": [], "anwserVariants": [] };
             payload = await askProverb("", sessionId);
         }
 
         else if (action == "useranswers") {
-            console.log(`action = useranswers`);
             let usersAnswer = ourReq.result.resolvedQuery;
             let reactionToPrevAnswer = await checkAnswer(usersAnswer, users[sessionId].anwserVariants);
-            let contexts = ourReq.result.contexts;
-            if (contexts.length > 0) {
-                for (let eachContext of contexts) {
-                    if (eachContext.name = "endgame") {
-                        payload = await askProverb("", sessionId);
-                    } else {
-                        payload = await askProverb(reactionToPrevAnswer, sessionId);
-                    }
-                }
-            }
+            payload = await askProverb(reactionToPrevAnswer, sessionId);
         }
 
         else if (action == "restart") {
@@ -191,11 +178,11 @@ async function askProverb(reactionToPrevAnswer, sessionId) {
         "speech": response,
         "displayText": response,
         "contextOut": [
-            {
+            /*{
                 "name": "endgame",
                 "parameters": {},
                 "lifespan": 1
-            },
+            },*/
             {
                 "name": "useranswers",
                 "parameters": {},
@@ -254,18 +241,18 @@ async function getQuery(q) {
         const { Client } = require('pg');
 
         // Credentials for Heroku
-        /*
         const user = "ydxzwdgaxatmet"; // postgres
         const host = "ec2-54-235-249-33.compute-1.amazonaws.com"; // localhost
         const database = "d6fkk5vc9s6g8p"; // finishproverbbot
         const dbPort = 5432;
-        */
 
         // Credentials for local machine
+        /*
         const user = "postgres"; // postgres
         const host = "localhost"; // localhost
         const database = "finishproverbbot"; // finishproverbbot
         const dbPort = 5432;
+        */
 
         const client = new Client({
             user: user,
